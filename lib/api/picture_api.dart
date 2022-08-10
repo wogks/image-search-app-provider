@@ -18,7 +18,8 @@ class PictureApi {
   }
 
   Future<List<Picture>> getImages(String query) async {
-    Uri url = Uri.parse('https://pixabay.com/api/?key=10711147-dc41758b93b263957026bdadb&q=$query&image_type=photo');
+    Uri url = Uri.parse(
+        'https://pixabay.com/api/?key=10711147-dc41758b93b263957026bdadb&q=$query&image_type=photo');
 
     http.Response response = await http.get(url);
 
@@ -28,5 +29,4 @@ class PictureApi {
     List<dynamic> hits = json['hits'];
     return hits.map((e) => Picture.fromJson(e)).toList();
   }
-
 }
