@@ -13,6 +13,14 @@ class ImageSearchScreen extends StatefulWidget {
 
 class _ImageSearchScreenState extends State<ImageSearchScreen> {
   final _controller = TextEditingController();
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, (() {
+      final viewModel = context.read<ImageSearchViewModel>();
+      viewModel.fetchImages('');
+    }));
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -64,7 +72,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child:  GridView(
+              child:  viewModel.isLoading? const Center(child: CircularProgressIndicator()) : GridView(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount:
                           orientation == Orientation.portrait ? 2 : 4,
