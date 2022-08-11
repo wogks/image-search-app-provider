@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_search_provider/image_app.dart';
+import 'package:image_search_provider/image_search_view_model.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (_) => ImageSearchViewModel(),
+    child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

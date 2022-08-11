@@ -10,6 +10,6 @@ class VideoSearchScreen extends StatefulWidget {
 class _VideoSearchScreenState extends State<VideoSearchScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold();
   }
 }

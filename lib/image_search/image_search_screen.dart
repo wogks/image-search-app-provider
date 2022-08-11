@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_search_provider/api/picture_api.dart';
+import 'package:image_search_provider/image_search_view_model.dart';
 import 'package:image_search_provider/model/picture.dart';
+import 'package:provider/provider.dart';
 
 class ImageSearchScreen extends StatefulWidget {
   const ImageSearchScreen({Key? key}) : super(key: key);
@@ -10,8 +12,6 @@ class ImageSearchScreen extends StatefulWidget {
 }
 
 class _ImageSearchScreenState extends State<ImageSearchScreen> {
-  final _pictureApi = PictureApi();
-
   final _controller = TextEditingController();
 
   @override
@@ -23,6 +23,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
+    final viewModel = context.watch<ImageSearchViewModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +49,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
                 ),
                 suffixIcon: GestureDetector(
                   onTap: () {
-                    _pictureApi.fetchImages(_controller.text);
+                    viewModel.fetchImages(_controller.text);
                   },
                   child: const Icon(Icons.search),
                 ),
@@ -63,44 +64,14 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: StreamBuilder<List<Picture>>(
-                stream: _pictureApi.imageStream,
-                initialData: const [],
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('에러가 발생했습니다'),
-                    );
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: Text('데이터가 없습니다'),
-                    );
-                  }
-
-                  final List<Picture> images = snapshot.data!;
-
-                  if (images.isEmpty) {
-                    return const Center(
-                      child: Text('데이터가 0개입니다'),
-                    );
-                  }
-
-                  return GridView(
+              child:  GridView(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount:
                           orientation == Orientation.portrait ? 2 : 4,
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 10,
                     ),
-                    children: images.map((Picture image) {
+                    children: viewModel.images.map((Picture image) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Image.network(
@@ -109,9 +80,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
                         ),
                       );
                     }).toList(),
-                  );
-                },
-              ),
+                  )
             ),
           ),
         ],
